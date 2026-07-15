@@ -29,6 +29,15 @@ const remaining = (id: string) => {
   return state && active.value ? session.engine.remainingMs(state, active.value) : 0
 }
 const stateFor = (id: string) => active.value?.timerStates.find((t) => t.timerId === id)
+const elapsedFor = (id: string) => {
+  const state = stateFor(id)
+  if (!state || !active.value) return 0
+  const end =
+    active.value.status === 'paused' && active.value.pausedAt ? active.value.pausedAt : now.value
+  return Math.max(0, end - state.startedAt)
+}
+const displayTime = (id: string, mode: 'countdown' | 'countup' | undefined) =>
+  mode === 'countup' ? elapsedFor(id) : remaining(id)
 const statusFor = (id: string, warn = 0) => {
   const r = remaining(id)
   const s = stateFor(id)
@@ -36,8 +45,10 @@ const statusFor = (id: string, warn = 0) => {
   if (r <= warn * 1000) return 'warning'
   return 'active'
 }
-const progress = (id: string, total: number) =>
-  Math.max(0, Math.min(100, remaining(id) / (total * 10)))
+const progress = (id: string, total: number, mode: 'countdown' | 'countup' | undefined) => {
+  if (mode === 'countup') return ((elapsedFor(id) % (total * 1000)) / (total * 1000)) * 100
+  return Math.max(0, Math.min(100, remaining(id) / (total * 10)))
+}
 async function wake() {
   try {
     if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen')
@@ -107,19 +118,22 @@ onBeforeUnmount(() => {
       >
         <div class="timer-card-top">
           <span class="timer-name">{{ timer.name }}</span
-          ><span>{{
-            statusFor(timer.id, timer.warningBeforeSeconds) === 'due'
-              ? 'ครบเวลา'
-              : statusFor(timer.id, timer.warningBeforeSeconds) === 'warning'
-                ? 'ใกล้ครบ'
-                : 'กำลังจับเวลา'
-          }}</span>
+          ><span
+            >{{ timer.displayMode === 'countup' ? 'นับขึ้น • ' : 'นับถอยหลัง • '
+            }}{{
+              statusFor(timer.id, timer.warningBeforeSeconds) === 'due'
+                ? 'ครบเวลา'
+                : statusFor(timer.id, timer.warningBeforeSeconds) === 'warning'
+                  ? 'ใกล้ครบ'
+                  : 'กำลังจับเวลา'
+            }}</span
+          >
         </div>
-        <div class="countdown">{{ fmt(remaining(timer.id)) }}</div>
+        <div class="countdown">{{ fmt(displayTime(timer.id, timer.displayMode)) }}</div>
         <div class="progress">
           <span
             :style="{
-              width: `${progress(timer.id, timer.intervalSeconds)}%`,
+              width: `${progress(timer.id, timer.intervalSeconds, timer.displayMode)}%`,
               background: timer.color || '#ef4444',
             }"
           ></span>
@@ -187,7 +201,15 @@ onBeforeUnmount(() => {
         <BellRing :size="56" />
         <p>ครบเวลา</p>
         <h2>{{ active.groupSnapshot.timers.find((t) => t.id === currentAlert.timerId)?.name }}</h2>
-        <p>รอบที่ {{ currentAlert.cycle }} • รอบใหม่เริ่มอัตโนมัติแล้ว</p>
+        <p>
+          รอบที่ {{ currentAlert.cycle }} •
+          {{
+            active.groupSnapshot.timers.find((t) => t.id === currentAlert.timerId)?.displayMode ===
+            'countup'
+              ? 'กำลังจับเวลาต่อเนื่อง'
+              : 'รอบใหม่เริ่มอัตโนมัติแล้ว'
+          }}
+        </p>
         <button class="button" @click="session.acknowledge(currentAlert.timerId)">รับทราบ</button>
       </div>
     </div>

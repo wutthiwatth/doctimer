@@ -44,8 +44,8 @@ async function start() {
           ><CheckCircle2 color="#16a34a" />
         </div>
         <p class="meta">
-          รอบทุก {{ time(timer.intervalSeconds) }} • เตือนก่อน
-          {{ timer.warningBeforeSeconds || 0 }} วินาที
+          {{ timer.displayMode === 'countup' ? 'นับขึ้นจาก 00:00' : 'นับถอยหลัง' }} • Track ทุก
+          {{ time(timer.intervalSeconds) }} • เตือนก่อน {{ timer.warningBeforeSeconds || 0 }} วินาที
         </p>
       </article>
     </div>

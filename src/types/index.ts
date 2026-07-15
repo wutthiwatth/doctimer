@@ -3,6 +3,7 @@ export interface TimerDefinition {
   name: string
   shortName?: string
   intervalSeconds: number
+  displayMode?: 'countdown' | 'countup'
   warningBeforeSeconds?: number
   color?: string
   icon?: string

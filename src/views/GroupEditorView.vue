@@ -17,6 +17,7 @@ const createTimer = (sortOrder: number): TimerDefinition => ({
   id: crypto.randomUUID(),
   name: `ตัวจับเวลา ${sortOrder + 1}`,
   intervalSeconds: 120,
+  displayMode: 'countdown',
   warningBeforeSeconds: 10,
   color: '#dc2626',
   voiceMessage: '',
@@ -38,6 +39,9 @@ const group = ref<TimerGroup>(
         timers: [createTimer(0)],
       },
 )
+group.value.timers.forEach((timer) => {
+  timer.displayMode ??= 'countdown'
+})
 const minutes = (timer: TimerDefinition) => Math.floor(timer.intervalSeconds / 60),
   seconds = (timer: TimerDefinition) => timer.intervalSeconds % 60
 function setTime(timer: TimerDefinition, min: number, sec: number) {
@@ -116,6 +120,20 @@ async function save() {
       <article v-for="(timer, index) in group.timers" :key="timer.id" class="card timer-editor">
         <div class="form-group wide">
           <label>ชื่อ Timer</label><input v-model="timer.name" class="input" />
+        </div>
+        <div class="form-group wide">
+          <label>รูปแบบการแสดงเวลา</label>
+          <select v-model="timer.displayMode" class="input">
+            <option value="countdown">นับถอยหลังจากเวลาที่ตั้ง</option>
+            <option value="countup">นับขึ้นจาก 00:00 และ Track ตามเวลาที่ตั้ง</option>
+          </select>
+          <span class="meta">
+            {{
+              timer.displayMode === 'countup'
+                ? 'เวลาเดินต่อเนื่องและสร้าง Track ทุกรอบ โดยไม่รีเซ็ตหน้าจอเป็นศูนย์'
+                : 'นับจนถึง 00:00 แล้วเริ่มนับถอยหลังรอบใหม่อัตโนมัติ'
+            }}
+          </span>
         </div>
         <div class="form-group">
           <label>นาที</label
