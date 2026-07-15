@@ -11,7 +11,7 @@ permissions:
 
 env:
   CAPROVER_SERVER: https://captain.iboommm.com
-  CAPROVER_APP_NAME: doctimer-ui
+  CAPROVER_APP_NAME: doctimer
   DOCKERHUB_NAMESPACE: iboommm
   DOCKER_IMAGE_NAME: doctimer-ui
   DOCKER_BUILD_RECORD_UPLOAD: 'false'
