@@ -1,0 +1,39 @@
+import type { TimerGroup } from '../types'
+
+export const BASIC_GROUP: TimerGroup = {
+  id: 'basic-cpr',
+  name: 'Basic CPR',
+  description: 'ชุดจับเวลาพื้นฐานสำหรับ CPR ผู้ใหญ่',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  timers: [
+    {
+      id: 'cpr-cycle',
+      name: 'CPR Cycle',
+      shortName: 'CPR',
+      intervalSeconds: 120,
+      warningBeforeSeconds: 10,
+      color: '#dc2626',
+      voiceMessage: 'ครบสองนาที ตรวจจังหวะหัวใจ',
+      vibrationPattern: [300, 120, 300],
+      soundType: 'due',
+      autoRepeat: true,
+      enabled: true,
+      sortOrder: 0,
+    },
+    {
+      id: 'adrenaline',
+      name: 'Adrenaline',
+      shortName: 'ยา',
+      intervalSeconds: 180,
+      warningBeforeSeconds: 15,
+      color: '#f59e0b',
+      voiceMessage: 'ถึงเวลาฉีดอะดรีนาลีน',
+      vibrationPattern: [500, 150, 500],
+      soundType: 'due',
+      autoRepeat: true,
+      enabled: true,
+      sortOrder: 1,
+    },
+  ],
+}
