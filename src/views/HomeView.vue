@@ -33,7 +33,7 @@ const formatInterval = (seconds: number) =>
         :to="`/prepare/${groups.groups[0].id}`"
         class="button primary"
         >เริ่ม CPR <ChevronRight /></RouterLink
-      ><RouterLink to="/groups/new" class="button secondary"><Plus />สร้าง Group</RouterLink>
+      ><RouterLink to="/groups/new" class="button secondary"><Plus />สร้าง Set</RouterLink>
     </div>
     <div class="status-row">
       <span class="status-pill"><span class="status-dot" />พร้อมใช้งาน Offline</span
@@ -42,8 +42,8 @@ const formatInterval = (seconds: number) =>
     </div>
     <div class="section-head">
       <div>
-        <div class="eyebrow">Timer groups</div>
-        <h2>กลุ่มที่บันทึกไว้</h2>
+        <div class="eyebrow">Timer sets</div>
+        <h2>Set ที่บันทึกไว้</h2>
       </div>
       <RouterLink to="/groups/new" class="button secondary"><Plus />เพิ่ม</RouterLink>
     </div>
@@ -74,7 +74,7 @@ const formatInterval = (seconds: number) =>
           :to="`/prepare/${group.id}`"
           class="button primary"
           style="width: 100%; margin-top: 18px"
-          >เลือกกลุ่มนี้ <ChevronRight
+          >เลือก Set นี้ <ChevronRight
         /></RouterLink>
       </article>
     </div>

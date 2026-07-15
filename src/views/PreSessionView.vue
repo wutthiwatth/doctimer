@@ -69,7 +69,8 @@ async function start() {
       </div>
     </div>
     <p class="notice" style="margin-top: 18px">
-      Timer ทุกตัวจะเริ่มพร้อมกัน
+      ตัวจับเวลาทั้ง {{ group.timers.filter((timer) => timer.enabled).length }} ตัวจะเริ่มพร้อมกัน
+      แต่ละตัวมีรอบเวลาและจำนวนรอบแยกจากกัน
       ระบบใช้เวลาจริงจากอุปกรณ์และคำนวณรอบที่ผ่านไปเมื่อกลับจากเบื้องหลัง
     </p>
     <button

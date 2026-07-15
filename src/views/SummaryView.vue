@@ -64,7 +64,7 @@ async function restart() {
         ><strong>{{ item.events.filter((e) => e.type === 'timer_triggered').length }}</strong>
       </div>
     </div>
-    <div class="section-head"><h2>จำนวนรอบแต่ละ Timer</h2></div>
+    <div class="section-head"><h2>จำนวนรอบของแต่ละตัวจับเวลา</h2></div>
     <div class="grid grid-2">
       <div v-for="timer in item.timerStates" :key="timer.timerId" class="card">
         <strong>{{ item.groupSnapshot.timers.find((t) => t.id === timer.timerId)?.name }}</strong>
@@ -85,7 +85,7 @@ async function restart() {
     <div class="hero-actions">
       <button class="button secondary" @click="exportJson"><Download />Export JSON</button
       ><button class="button secondary" @click="printSummary"><Printer />พิมพ์</button
-      ><button class="button primary" @click="restart"><RotateCcw />เริ่มใหม่จาก Group เดิม</button
+      ><button class="button primary" @click="restart"><RotateCcw />เริ่มใหม่จาก Set เดิม</button
       ><RouterLink to="/" class="button secondary"><Home />หน้าหลัก</RouterLink>
     </div>
   </section>

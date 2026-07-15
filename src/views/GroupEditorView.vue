@@ -13,16 +13,29 @@ const route = useRoute(),
   error = ref('')
 const original = computed(() => store.groups.find((item) => item.id === route.params.id))
 const now = new Date().toISOString()
+const createTimer = (sortOrder: number): TimerDefinition => ({
+  id: crypto.randomUUID(),
+  name: `ตัวจับเวลา ${sortOrder + 1}`,
+  intervalSeconds: 120,
+  warningBeforeSeconds: 10,
+  color: '#dc2626',
+  voiceMessage: '',
+  vibrationPattern: [300, 100, 300],
+  soundType: 'due',
+  autoRepeat: true,
+  enabled: true,
+  sortOrder,
+})
 const group = ref<TimerGroup>(
   original.value
-  ? clonePlain(original.value)
+    ? clonePlain(original.value)
     : {
         id: crypto.randomUUID(),
         name: '',
         description: '',
         createdAt: now,
         updatedAt: now,
-        timers: [],
+        timers: [createTimer(0)],
       },
 )
 const minutes = (timer: TimerDefinition) => Math.floor(timer.intervalSeconds / 60),
@@ -31,23 +44,11 @@ function setTime(timer: TimerDefinition, min: number, sec: number) {
   timer.intervalSeconds = Math.max(0, Number(min || 0) * 60 + Number(sec || 0))
 }
 function addTimer() {
-  group.value.timers.push({
-    id: crypto.randomUUID(),
-    name: 'ตัวจับเวลาใหม่',
-    intervalSeconds: 120,
-    warningBeforeSeconds: 10,
-    color: '#dc2626',
-    voiceMessage: '',
-    vibrationPattern: [300, 100, 300],
-    soundType: 'due',
-    autoRepeat: true,
-    enabled: true,
-    sortOrder: group.value.timers.length,
-  })
+  group.value.timers.push(createTimer(group.value.timers.length))
 }
 function duplicate(timer: TimerDefinition) {
   group.value.timers.push({
-      ...clonePlain(timer),
+    ...clonePlain(timer),
     id: crypto.randomUUID(),
     name: `${timer.name} สำเนา`,
     sortOrder: group.value.timers.length,
@@ -55,7 +56,7 @@ function duplicate(timer: TimerDefinition) {
 }
 async function save() {
   error.value = ''
-  if (!group.value.name.trim()) error.value = 'กรุณาระบุชื่อ Group'
+  if (!group.value.name.trim()) error.value = 'กรุณาระบุชื่อ Set'
   else if (!group.value.timers.some((t) => t.enabled))
     error.value = 'ต้องเปิดใช้งาน Timer อย่างน้อยหนึ่งตัว'
   else if (group.value.timers.some((t) => t.enabled && t.intervalSeconds <= 0))
@@ -75,14 +76,23 @@ async function save() {
     <button class="button secondary" @click="router.back()"><ArrowLeft />กลับ</button>
     <div class="section-head">
       <div>
-        <div class="eyebrow">Group editor</div>
-        <h1 style="font-size: 2.6rem">{{ original ? 'แก้ไข Group' : 'สร้าง Group ใหม่' }}</h1>
+        <div class="eyebrow">Timer set editor</div>
+        <h1 style="font-size: 2.6rem">{{ original ? 'แก้ไข Set' : 'สร้าง Set ใหม่' }}</h1>
+        <p class="subtitle">
+          ตั้งชื่อ Set และเพิ่มตัวจับเวลาได้ตามจำนวนที่ต้องการ ทุกตัวจะเริ่มพร้อมกันเมื่อเริ่ม
+          Session
+        </p>
       </div>
     </div>
     <div class="card grid">
       <div class="form-group">
-        <label for="group-name">ชื่อ Group</label
-        ><input id="group-name" v-model="group.name" class="input" placeholder="เช่น Adult CPR" />
+        <label for="group-name">ชื่อ Set</label
+        ><input
+          id="group-name"
+          v-model="group.name"
+          class="input"
+          placeholder="เช่น Adult CPR หรือ Code Blue"
+        />
       </div>
       <div class="form-group">
         <label for="description">คำอธิบาย</label
@@ -96,7 +106,10 @@ async function save() {
       </div>
     </div>
     <div class="section-head">
-      <h2>รายการ Timer</h2>
+      <div>
+        <h2>รายการตัวจับเวลา</h2>
+        <p class="meta">เพิ่มได้ไม่จำกัด • ขณะนี้ {{ group.timers.length }} ตัว</p>
+      </div>
       <button class="button secondary" @click="addTimer"><Plus />เพิ่ม Timer</button>
     </div>
     <div class="grid">
@@ -163,7 +176,7 @@ async function save() {
     <p v-if="error" class="error" role="alert">{{ error }}</p>
     <div class="hero-actions">
       <button class="button primary" :disabled="saving" @click="save">
-        <Save />{{ saving ? 'กำลังบันทึก…' : 'บันทึก Group' }}
+        <Save />{{ saving ? 'กำลังบันทึก…' : 'บันทึก Set' }}
       </button>
     </div>
   </section>
