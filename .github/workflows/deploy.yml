@@ -1,0 +1,105 @@
+name: Deploy UI to CapRover
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CAPROVER_SERVER: https://captain.iboommm.com
+  CAPROVER_APP_NAME: doctimer-ui
+  DOCKERHUB_NAMESPACE: iboommm
+  DOCKER_IMAGE_NAME: doctimer-ui
+  DOCKER_BUILD_RECORD_UPLOAD: 'false'
+
+concurrency:
+  group: doctimer-production-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-ui:
+    name: Test and build UI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test UI
+        run: npm test
+
+      - name: Build UI
+        run: npm run build
+
+  deploy-ui:
+    name: Deploy UI
+    needs: test-ui
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image tag
+        id: version
+        shell: bash
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          echo "tag=1.0.0-${short_sha}" >> "$GITHUB_OUTPUT"
+          echo "image=${{ env.DOCKERHUB_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}:1.0.0-${short_sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.version.outputs.image }}
+          build-args: |
+            BUILD_VERSION=${{ steps.version.outputs.tag }}
+          cache-from: type=gha,scope=ui
+          cache-to: type=gha,mode=max,scope=ui
+
+      - name: Set up Node.js for CapRover CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Deploy image to CapRover
+        env:
+          APP_TOKEN: ${{ secrets.CAPROVER_APP_TOKEN_UI }}
+        run: |
+          npx --yes caprover deploy \
+            --caproverUrl "${{ env.CAPROVER_SERVER }}" \
+            --appToken "$APP_TOKEN" \
+            --appName "${{ env.CAPROVER_APP_NAME }}" \
+            --imageName "${{ steps.version.outputs.image }}"
