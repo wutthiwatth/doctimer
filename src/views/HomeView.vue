@@ -22,17 +22,17 @@ const formatInterval = (seconds: number) =>
 
 <template>
   <section class="page">
-    <div class="eyebrow">Emergency companion</div>
-    <h1>ทุกวินาที<br />ชัดเจนและพร้อมใช้</h1>
+    <div class="eyebrow">Multi-timer workspace</div>
     <p class="subtitle">
-      จับเวลาหลายรายการพร้อมกัน แจ้งเตือนตรงรอบ และบันทึกเหตุการณ์โดยไม่เก็บข้อมูลระบุตัวผู้ป่วย
+      จัดการตัวจับเวลาหลายรายการพร้อมกัน เลือกรูปแบบนับขึ้นหรือนับถอยหลัง
+      พร้อมแจ้งเตือนและบันทึกเหตุการณ์ตามรอบที่กำหนด
     </p>
     <div class="hero-actions">
       <RouterLink
         v-if="groups.groups[0]"
         :to="`/prepare/${groups.groups[0].id}`"
         class="button primary"
-        >เริ่ม CPR <ChevronRight /></RouterLink
+        >เริ่มจับเวลา <ChevronRight /></RouterLink
       ><RouterLink to="/groups/new" class="button secondary"><Plus />สร้าง Set</RouterLink>
     </div>
     <div class="status-row">

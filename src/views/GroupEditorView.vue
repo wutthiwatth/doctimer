@@ -17,7 +17,7 @@ const createTimer = (sortOrder: number): TimerDefinition => ({
   id: crypto.randomUUID(),
   name: `ตัวจับเวลา ${sortOrder + 1}`,
   intervalSeconds: 120,
-  displayMode: 'countdown',
+  displayMode: 'countup',
   warningBeforeSeconds: 10,
   color: '#dc2626',
   voiceMessage: '',
@@ -40,7 +40,7 @@ const group = ref<TimerGroup>(
       },
 )
 group.value.timers.forEach((timer) => {
-  timer.displayMode ??= 'countdown'
+  timer.displayMode ??= 'countup'
 })
 const minutes = (timer: TimerDefinition) => Math.floor(timer.intervalSeconds / 60),
   seconds = (timer: TimerDefinition) => timer.intervalSeconds % 60

@@ -339,13 +339,13 @@ textarea:focus-visible {
 .mode-switch {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 .mode-option {
-  min-height: 68px;
-  padding: 10px 12px;
+  min-height: 72px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--paper);
   color: var(--ink);
   display: flex;
@@ -359,7 +359,7 @@ textarea:focus-visible {
 }
 .mode-option.selected {
   border: 2px solid var(--red);
-  padding: 9px 11px;
+  padding: 11px 13px;
   background: color-mix(in srgb, var(--red) 8%, var(--paper));
   box-shadow: 0 5px 16px #9f1d2018;
 }
@@ -368,7 +368,8 @@ textarea:focus-visible {
   display: block;
 }
 .mode-option strong {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
 }
 .mode-option small {
   color: var(--muted);
@@ -377,9 +378,9 @@ textarea:focus-visible {
   line-height: 1.3;
 }
 .mode-indicator {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
   border: 2px solid var(--line);
   border-radius: 50%;
   position: relative;
@@ -399,6 +400,9 @@ textarea:focus-visible {
   grid-template-columns: 1.6fr 0.6fr 0.6fr 0.5fr auto;
   gap: 10px;
   align-items: end;
+}
+.timer-editor .wide {
+  grid-column: 1 / -1;
 }
 .editor-actions {
   display: flex;
@@ -658,6 +662,12 @@ textarea:focus-visible {
     flex: 1;
     min-width: 0;
     padding: 0 10px;
+  }
+  .mode-switch {
+    grid-template-columns: 1fr;
+  }
+  .mode-option {
+    min-height: 64px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
