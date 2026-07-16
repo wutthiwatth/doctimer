@@ -123,10 +123,28 @@ async function save() {
         </div>
         <div class="form-group wide">
           <label>รูปแบบการแสดงเวลา</label>
-          <select v-model="timer.displayMode" class="input">
-            <option value="countdown">นับถอยหลังจากเวลาที่ตั้ง</option>
-            <option value="countup">นับขึ้นจาก 00:00 และ Track ตามเวลาที่ตั้ง</option>
-          </select>
+          <div class="mode-switch" role="group" aria-label="เลือกรูปแบบการแสดงเวลา">
+            <button
+              type="button"
+              class="mode-option"
+              :class="{ selected: timer.displayMode === 'countdown' }"
+              :aria-pressed="timer.displayMode === 'countdown'"
+              @click="timer.displayMode = 'countdown'"
+            >
+              <span class="mode-indicator" aria-hidden="true"></span>
+              <span><strong>นับถอยหลัง</strong><small>จากเวลาที่ตั้ง → 00:00</small></span>
+            </button>
+            <button
+              type="button"
+              class="mode-option"
+              :class="{ selected: timer.displayMode === 'countup' }"
+              :aria-pressed="timer.displayMode === 'countup'"
+              @click="timer.displayMode = 'countup'"
+            >
+              <span class="mode-indicator" aria-hidden="true"></span>
+              <span><strong>นับไปข้างหน้า</strong><small>00:00 → เดินต่อเนื่อง</small></span>
+            </button>
+          </div>
           <span class="meta">
             {{
               timer.displayMode === 'countup'
